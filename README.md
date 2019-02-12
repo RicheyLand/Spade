@@ -5,7 +5,7 @@ This cross-platform code editor is implemented in C++ language with use of Qt Fr
 Functionalities not provided and behaviors provided only by some, mostly proprietary, solutions, were taken in account in editor design.<br />
 As well functionalities for projects manipulation used in development environments were implemented.
 
-![Screenshot](screenshot.png)
+![Screenshot](docs/images/screenshot.png)
 
 ## Features
 
