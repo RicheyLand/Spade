@@ -1067,29 +1067,21 @@ Spade::Spade(int _which, QWidget *parent) :
     font.setBold(false);
     ui->help_editor->setPlainText("INFORMATION\n"
         "   Press escape key to close this help screen\n"
-        "   This help screen can be anytime activated from action menu using appropriate push button\n"
         "\nDESCRIPTION\n"
-        "   Spade is fast and lightweight code editor with syntax highlighting\n"
-        "   Spade editor is free and it runs on GNU/Linux\n"
+        "   Spade is fast and lightweight cross-platform code editor with syntax highlighting\n"
         "   Editor supports many well known programming languages\n"
         "   Editor provides advanced manipulation with projects and code building\n"
-        "   Interface of editor is trying to be simple and user-friendly, but it provides functionality for both beginners and advanced users\n"
-        "   Interface of editor is built from many trays to provide easy and fast manipulation with opened documents and changing preferences\n"
-        "   Interface can be hidden anytime to allow maximum concentration of user to source code\n"
-        "   Editor stays in same state as it was before its closing, so user do not need to take care about saving files before exit\n"
+        "   Editor has been made to be simple and user-friendly but it provides functionality for both beginners and advanced users\n"
+        "   Interface of editor is built from many trays to provide fast and easy manipulation with opened documents\n"
+        "   Interface can be hidden to allow maximum concentration to source code\n"
+        "   Editor stays in same state as it was before its closing so user don't need to take care about saving files before exit\n"
         "   It is allowed to insert custom color highlighting into any opened document to give special meaning to some parts of text\n"
-        "   Editor even provides to define your own programming language and manipulate with it as with native supported language\n"
-        "   Editor allows Vim-style editing for any opened text document and supports advanced Vim features for text manipulation\n"
-        "\nCONTROL\n"
-        "   Visibility of interface can be anytime switched using escape key\n"
-        "   Only one tray can be active at the same time, so changing interface visibility affects only one active tray\n"
-        "   Function keys are shortcuts for push buttons in actual tray, so behavior of these keys is different by type of active tray\n"
+        "   Editor allows users to define syntax highlighting for custom programming language\n"
+        "   Editor provides Vim-style editing for any opened text document and supports advanced Vim features for text manipulation\n"
         "\nHINTS\n"
-        "   Line and column number will be shown when cursor enter line numbers area\n"
-        "   If icon of close button in tray contains exclamation mark, then content of file in editor is not same as content saved on disk\n"
-        "   Stability problems and application crashing can be solved by removing all configuration files located at ~/.config/spade/\n"
-        "\nPARAMETERS\n"
+        "   Line and column number will be shown when cursor enters line numbers area\n"
         "   All optional parameters of application can be paths to source files which have to be opened in editor\n"
+        "   Stability problems and application crashing can be solved by removing all its configuration files"
         "\nKEYBOARD SHORTCUTS\n"
         "   Full screen           Alt + Enter\n"
         "   Insert mode           Insert\n"
@@ -1124,7 +1116,7 @@ Spade::Spade(int _which, QWidget *parent) :
         "   Exit program          Ctrl + Q\n"
         "\nVIM\n"
         "   Vim-style editing for any opened text document can be activated using appropriate button in actions menu\n"
-        "   Vim-style editing is very similiar to default Vim editor and all Vim commands below are supported\n"
+        "   Vim-style editing is very similar to default Vim editor and all Vim commands below are supported\n"
         "   All Vim modes(command mode, insert mode, visual mode and replace mode) are supported\n"
         "\nVIM COMMANDS\n"
         "   Save changes                                 :w\n"
@@ -1132,12 +1124,12 @@ Spade::Spade(int _which, QWidget *parent) :
         "   Force quit                                   :q!\n"
         "   Save changes and quit                        :wq\n"
         "   Search command                               /\n"
-        "   Activate insert mode at actual character     i\n"
-        "   Activate insert mode at next character       a\n"
-        "   Activate insert mode at line begin           I\n"
-        "   Activate insert mode at line end             A\n"
-        "   Activate insert mode at next line            o\n"
-        "   Activate insert mode at previous line        O\n"
+        "   Activate insert mode on actual character     i\n"
+        "   Activate insert mode on next character       a\n"
+        "   Activate insert mode on line begin           I\n"
+        "   Activate insert mode on line end             A\n"
+        "   Activate insert mode on next line            o\n"
+        "   Activate insert mode on previous line        O\n"
         "   Activate visual mode                         v\n"
         "   Activate replace mode                        R\n"
         "   Move to end of word                          e\n"
@@ -1197,29 +1189,23 @@ Spade::Spade(int _which, QWidget *parent) :
     text_cursor->setPosition(0, QTextCursor::MoveAnchor);
     text_cursor->setPosition(11, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(151, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(162, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(59, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(70, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(1258, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(1265, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(1045, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(1050, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(1572, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(1577, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(1334, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(1352, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(1910, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(1920, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(2464, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(2467, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(2027, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(2045, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(2765, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(2777, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(3157, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(3160, QTextCursor::KeepAnchor);
-    text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(3459, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(3471, QTextCursor::KeepAnchor);
-    text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(6433, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(6438, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(5739, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(5744, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
                                                         //  add all editor tabs into appropriate layouts from Qt Designer
     ui->tab_1_v_layout->addWidget(editor);
