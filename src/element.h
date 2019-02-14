@@ -39,6 +39,7 @@
 #include <QDir>
 #include <QChar>
 #include <QFile>
+#include <QStandardPaths>
 #include <QTextStream>
 #include <QPaintEvent>
 #include <QResizeEvent>
@@ -68,7 +69,6 @@
 #include <QFontMetrics>
 #include <QColor>
 #include <random>
-#include <QDebug>                                       //  REMOVE AFTER DEBUG PART
 using namespace std;
 
 namespace Ui {

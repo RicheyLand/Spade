@@ -504,7 +504,8 @@ private:
 
     int which;                                          //  index of actual workspace in layout
     int thread_count;                                   //  holds recommended count of threads used for compilation
-    QString home_path;
+    QString home_path;                                  //  full path of user's home directory
+    QString config_path;                                //  full path of user's config directory
     QString config_file_path;                           //  full path to configuration file
     QString language_file_path;                         //  full path to language file
     QString projects_file_path;                         //  full path to projects file

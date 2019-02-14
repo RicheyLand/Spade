@@ -123,6 +123,11 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
     lineNumberArea->setToolTip("Line: 0, Column 0");    //  initialize line number area tooltip content to actual coordinates of text cursor
+
+    QString temp_path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+
+    if (temp_path.right(1) != "/")
+        temp_path.push_back('/');
                                                         //  set default values for attributes of object
     content = "";
     old_selection.from = 0;
@@ -130,7 +135,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     actual_selection.from = 0;
     actual_selection.to = 0;
     theme = 1;
-    file_path = "/tmp/untitled.txt";
+    file_path = temp_path + "untitled.txt";
     vim_active = false;
     key_press_flag = false;
     undo_redo_flag = false;
@@ -849,9 +854,14 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent * event)
 /// Class constructor
 Tab_details::Tab_details()
 {                                                       //  set default values for attributes of object
+    QString temp_path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+
+    if (temp_path.right(1) != "/")
+        temp_path.push_back('/');
+
     index_in_tabs = 0;
     language = plain_text;
-    file_path = "/tmp/untitled.txt";
+    file_path = temp_path + "untitled.txt";
     file_name = "untitled.txt";
     font_size = 10;
     tab_width = 4;
@@ -880,42 +890,47 @@ Spade::Spade(int _which, QWidget *parent) :
     if (thread_count < 1)
         thread_count = 4;
 
-    fullscreen = false;                                 //  fullscreen mode is always disabled at application startup
-    insert_mode = false;                                //  insert mode is always disabled at application startup
+    fullscreen = false;                                 //  fullscreen mode is always disabled on application startup
+    insert_mode = false;                                //  insert mode is always disabled on application startup
 
     home_path = QDir::homePath();                       //  get home path string defined by actual environment
 
     if (home_path.right(1) != "/")
         home_path.push_back('/');
 
-    QDir dir(home_path + ".config/spade");
+    config_path = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+
+    if (config_path.right(1) != "/")
+        config_path.push_back('/');
+
+    QDir dir(config_path + "spade");
 
     if (!dir.exists())
         dir.mkpath(".");
 
     if (which == 2)
     {
-        config_file_path = home_path + ".config/spade/" + "spade_2.conf";   //  connect with rest of path to configuration file
-        language_file_path = home_path + ".config/spade/" + "languages_2.conf";     //  connect with rest of path to language file
-        projects_file_path = home_path + ".config/spade/" + "projects_2.conf";    //  connect with rest of path to projects file
+        config_file_path = config_path + "spade/" + "spade_2.conf";   //  connect with rest of path to configuration file
+        language_file_path = config_path + "spade/" + "languages_2.conf";     //  connect with rest of path to language file
+        projects_file_path = config_path + "spade/" + "projects_2.conf";    //  connect with rest of path to projects file
     }
     else if (which == 3)
     {
-        config_file_path = home_path + ".config/spade/" + "spade_3.conf";   //  connect with rest of path to configuration file
-        language_file_path = home_path + ".config/spade/" + "languages_3.conf";     //  connect with rest of path to language file
-        projects_file_path = home_path + ".config/spade/" + "projects_3.conf";    //  connect with rest of path to projects file
+        config_file_path = config_path + "spade/" + "spade_3.conf";   //  connect with rest of path to configuration file
+        language_file_path = config_path + "spade/" + "languages_3.conf";     //  connect with rest of path to language file
+        projects_file_path = config_path + "spade/" + "projects_3.conf";    //  connect with rest of path to projects file
     }
     else if (which == 4)
     {
-        config_file_path = home_path + ".config/spade/" + "spade_4.conf";   //  connect with rest of path to configuration file
-        language_file_path = home_path + ".config/spade/" + "languages_4.conf";     //  connect with rest of path to language file
-        projects_file_path = home_path + ".config/spade/" + "projects_4.conf";    //  connect with rest of path to projects file
+        config_file_path = config_path + "spade/" + "spade_4.conf";   //  connect with rest of path to configuration file
+        language_file_path = config_path + "spade/" + "languages_4.conf";     //  connect with rest of path to language file
+        projects_file_path = config_path + "spade/" + "projects_4.conf";    //  connect with rest of path to projects file
     }
     else
     {
-        config_file_path = home_path + ".config/spade/" + "spade.conf";     //  connect with rest of path to configuration file
-        language_file_path = home_path + ".config/spade/" + "languages.conf";   //  connect with rest of path to language file
-        projects_file_path = home_path + ".config/spade/" + "projects.conf";    //  connect with rest of path to projects file
+        config_file_path = config_path + "spade/" + "spade.conf";     //  connect with rest of path to configuration file
+        language_file_path = config_path + "spade/" + "languages.conf";   //  connect with rest of path to language file
+        projects_file_path = config_path + "spade/" + "projects.conf";    //  connect with rest of path to projects file
     }
 
     setMinimumWidth(750);
