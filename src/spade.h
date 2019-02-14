@@ -502,6 +502,8 @@ public:
 private:
     Ui::Spade *ui;
 
+    QSysInfo systemInfo;                                //  information about current operating system
+    bool isWindows;                                     //  holds if operating system is Windows
     int which;                                          //  index of actual workspace in layout
     int thread_count;                                   //  holds recommended count of threads used for compilation
     QString home_path;                                  //  full path of user's home directory

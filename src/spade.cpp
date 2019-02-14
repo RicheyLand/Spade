@@ -883,6 +883,11 @@ Spade::Spade(int _which, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    if (systemInfo.windowsVersion() == QSysInfo::WV_None)   //  check if current operating system is Windows
+        isWindows = false;
+    else
+        isWindows = true;
+
     setWindowFlags(Qt::Window);                         //  allow to force fullscreen mode
     which = _which;
     thread_count = QThread::idealThreadCount();
@@ -11465,6 +11470,9 @@ void Spade::delete_button_3_pressed()
 /// Handle press of run button
 void Spade::run_button_pressed()
 {
+    if (isWindows)
+        return;                                         //  project executing on Windows will be supported in the future
+
     QString terminal = terminal_name->text();
 
     if (projects->currentIndex())                       //  check if there is at least one opened project
@@ -11665,6 +11673,9 @@ void Spade::run_button_pressed()
 /// Handle press of build button
 void Spade::build_button_pressed()
 {
+    if (isWindows)
+        return;                                         //  project executing on Windows will be supported in the future
+
     if (projects->currentIndex())                       //  check if there is at least one opened project
     {
         if (source_files->count())

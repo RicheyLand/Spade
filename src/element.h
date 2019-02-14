@@ -47,6 +47,7 @@
 #include <QMouseEvent>
 #include <QCloseEvent>
 #include <QFileSystemWatcher>
+#include <QSysInfo>
 #include <QMessageBox>
 #include <QTimer>
 #include <QProcess>
@@ -69,6 +70,7 @@
 #include <QFontMetrics>
 #include <QColor>
 #include <random>
+//#include <QDebug>
 using namespace std;
 
 namespace Ui {
