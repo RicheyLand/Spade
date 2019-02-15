@@ -4714,8 +4714,11 @@ bool Spade::check_file_path(QString & path)
         if (path[0] == '~')                             //  transfer tilde character at beginning of file path into home directory string
             path = home_path + path.mid(1);
 
-        if (path[0] != '/' || path[path.size() - 1] == '/')     //  file path cannot be directory
-            return true;
+        if (isWindows == false)
+        {
+            if (path[0] != '/' || path[path.size() - 1] == '/')     //  file path cannot be directory
+                return true;
+        }
 
         QFileInfo check_file(path);                     //  get file info by actual file path
 
@@ -4738,7 +4741,7 @@ bool Spade::check_file_path(QString & path)
 
             QDir dir(QDir::root());
 
-            if (dir.mkpath(path))                       //  try to create desired directory with its subdirectoris
+            if (dir.mkpath(path))                       //  try to create desired directory with its subdirectories
             {
                 path += filename;                       //  push filename back into file path
 
