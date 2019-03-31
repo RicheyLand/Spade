@@ -25,6 +25,6 @@ As well functionalities for projects manipulation used in development environmen
 ## Build instructions
 
 * Clone the Spade code editor repository.
-* Move into the **src** directory and run **qmake** utility to generate Makefile.
-* Build the executable using **make** automation tool.
+* Move into the `src` directory and run `qmake` utility to generate Makefile.
+* Build the executable using `make` automation tool.
 * Run Spade.
