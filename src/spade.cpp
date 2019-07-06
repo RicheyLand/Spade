@@ -608,6 +608,20 @@ void CodeEditor::keyPressEvent(QKeyEvent * event)       //  handle special keybo
             else
                 QPlainTextEdit::keyPressEvent(event);
         }
+        else if (event->key() == Qt::Key_U)
+        {
+            if (event->modifiers() & Qt::ControlModifier)
+                emit uppercase_signal();                //  Ctrl + U
+            else
+                QPlainTextEdit::keyPressEvent(event);
+        }
+        else if (event->key() == Qt::Key_L)
+        {
+            if (event->modifiers() & Qt::ControlModifier)
+                emit lowercase_signal();                //  Ctrl + L
+            else
+                QPlainTextEdit::keyPressEvent(event);
+        }
         else if (event->key() == Qt::Key_Up)
         {
             if (event->modifiers() & Qt::ControlModifier)
@@ -1289,6 +1303,8 @@ Spade::Spade(int _which, QWidget *parent) :
         QObject::connect(editor + i, SIGNAL(find_signal()), this, SLOT(find_now()));
         QObject::connect(editor + i, SIGNAL(swap_line_up_signal()), this, SLOT(swap_line_up_button_pressed()));
         QObject::connect(editor + i, SIGNAL(swap_line_down_signal()), this, SLOT(swap_line_down_button_pressed()));
+        QObject::connect(editor + i, SIGNAL(uppercase_signal()), this, SLOT(upper_case_button_pressed()));
+        QObject::connect(editor + i, SIGNAL(lowercase_signal()), this, SLOT(lower_case_button_pressed()));
         QObject::connect(editor + i, SIGNAL(comment_signal()), this, SLOT(toggle_comment()));
         QObject::connect(editor + i, SIGNAL(increase_font_size_signal()), this, SLOT(increase_font_size()));
         QObject::connect(editor + i, SIGNAL(decrease_font_size_signal()), this, SLOT(decrease_font_size()));

@@ -326,6 +326,14 @@ signals:                                                //  signals which editor
     void swap_line_down_signal();
 
 
+    /// Keypress uppercase signal
+    void uppercase_signal();
+
+
+    /// Keypress lowercase signal
+    void lowercase_signal();
+
+
     /// Keypress comment signal of text editor
     void comment_signal();
 
