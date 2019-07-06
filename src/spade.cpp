@@ -2230,6 +2230,7 @@ void Spade::init_interface()
     find_line_edit->setMinimumHeight(30);
     find_line_edit->setMaximumHeight(30);
     find_line_edit->setToolTip("Pattern which will be searched in the text");
+    find_line_edit->setPlaceholderText("Search pattern");
     replace_button->setIcon(* replace_icon);
     replace_button->setIconSize(QSize(30, 30));
     replace_button->setMinimumSize(30, 30);
@@ -2243,6 +2244,7 @@ void Spade::init_interface()
     replace_line_edit->setMinimumHeight(30);
     replace_line_edit->setMaximumHeight(30);
     replace_line_edit->setToolTip("Text pattern which will replace found occurrences");
+    replace_line_edit->setPlaceholderText("Replace pattern");
     regex_button->setIcon(* text_icon);
     regex_button->setIconSize(QSize(30, 30));
     regex_button->setMinimumSize(30, 30);
