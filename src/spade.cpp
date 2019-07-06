@@ -2507,12 +2507,16 @@ void Spade::init_interface()
                                                         //  initialize all visual elements in parameters tray
     run_parameters->setMinimumSize(50, 30);
     run_parameters->setToolTip("Program paramaters");
+    run_parameters->setPlaceholderText("Program paramaters");
     compile_parameters->setMinimumSize(50, 30);
     compile_parameters->setToolTip("Compiler parameters");
+    compile_parameters->setPlaceholderText("Compiler parameters");
     make_parameters->setMinimumSize(50, 30);
     make_parameters->setToolTip("Makefile parameters");
+    make_parameters->setPlaceholderText("Makefile parameters");
     terminal_name->setMinimumSize(50, 30);
     terminal_name->setToolTip("Default terminal emulation application");
+    terminal_name->setPlaceholderText("Default terminal");
     terminal_name->setText("gnome-terminal");
     back_button_8->setIcon(* home_icon);
     back_button_8->setIconSize(QSize(30, 30));
