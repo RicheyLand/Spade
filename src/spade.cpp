@@ -1095,7 +1095,7 @@ Spade::Spade(int _which, QWidget *parent) :
         "\nHINTS\n"
         "   Line and column number will be shown when cursor enters line numbers area\n"
         "   All optional parameters of application can be paths to source files which have to be opened in editor\n"
-        "   Stability problems and application crashing can be solved by removing all its configuration files"
+        "   Stability problems and application crashing can be solved by removing all its configuration files\n"
         "\nKEYBOARD SHORTCUTS\n"
         "   Full screen           Alt + Enter\n"
         "   Insert mode           Insert\n"
@@ -1118,6 +1118,8 @@ Spade::Spade(int _which, QWidget *parent) :
         "   Find                  Ctrl + F\n"
         "   Swap lines up         Ctrl + Shift + Up\n"
         "   Swap lines down       Ctrl + Shift + Down\n"
+        "   Upper case swap       Ctrl + U\n"
+        "   Lower case swap       Ctrl + L\n"
         "   Toggle comment        Ctrl + /\n"
         "   Increase font size    Ctrl + Plus\n"
         "   Decrease font size    Ctrl + Minus\n"
@@ -1209,17 +1211,17 @@ Spade::Spade(int _which, QWidget *parent) :
     text_cursor->setPosition(1045, QTextCursor::MoveAnchor);
     text_cursor->setPosition(1050, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(1334, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(1352, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(1335, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(1354, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(2464, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(2467, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(2533, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(2536, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(2765, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(2777, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(2834, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(2846, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
-    text_cursor->setPosition(5739, QTextCursor::MoveAnchor);
-    text_cursor->setPosition(5744, QTextCursor::KeepAnchor);
+    text_cursor->setPosition(5808, QTextCursor::MoveAnchor);
+    text_cursor->setPosition(5813, QTextCursor::KeepAnchor);
     text_cursor->setCharFormat(fmt);
                                                         //  add all editor tabs into appropriate layouts from Qt Designer
     ui->tab_1_v_layout->addWidget(editor);
