@@ -196,7 +196,6 @@ public:
     CodeEditor(QWidget * parent = 0);
 
     QString content;                                    //  actual text content of editor
-    Selection old_selection;                            //  previous cursor selection in text
     Selection actual_selection;                         //  actual cursor selection in text
     int theme;                                          //  actual color scheme
     QString file_path;                                  //  full path to opened text file
