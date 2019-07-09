@@ -5072,7 +5072,9 @@ void Spade::refresh_extra_selections(int files_index)
         for (int i = from; i < to; i++)
             found.push_back(content[i]);                //  save whole identifier into string
 
-        QRegularExpression identifier_regex("[A-Za-z_][A-Za-z0-9_]*");      //  regular expression for language identifier
+        found = "\\b" + found + "\\b";
+
+        QRegularExpression identifier_regex(found);     //  regular expression for language identifier
         identifier_regex.optimize();
 
         if (identifier_regex.isValid())                 //  check if regular expression of rule is valid
@@ -5083,15 +5085,12 @@ void Spade::refresh_extra_selections(int files_index)
             {
                 QRegularExpressionMatch match = match_iter.next();
 
-                if (match.captured(0) == found)         //  actual match must be same found identifier
-                {
-                    QTextEdit::ExtraSelection selection;    //  underline matched identifier in text editor content
-                    selection.cursor = editor[index].textCursor();
-                    selection.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
-                    selection.cursor.setPosition(match.capturedStart(), QTextCursor::MoveAnchor);
-                    selection.cursor.setPosition(match.capturedEnd(), QTextCursor::KeepAnchor);
-                    new_extra_selections.append(selection);     //  push new highlight of actual token into extra highlight of tab
-                }
+                QTextEdit::ExtraSelection selection;    //  underline matched identifier in text editor content
+                selection.cursor = editor[index].textCursor();
+                selection.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+                selection.cursor.setPosition(match.capturedStart(), QTextCursor::MoveAnchor);
+                selection.cursor.setPosition(match.capturedEnd(), QTextCursor::KeepAnchor);
+                new_extra_selections.append(selection);     //  push new highlight of actual token into extra highlight of tab
             }
         }
     }
