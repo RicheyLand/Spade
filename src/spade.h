@@ -203,6 +203,7 @@ public:
     bool vim_active;                                    //  holds if Vim mode is active
     bool key_press_flag;                                //  holds if key has been pressed during usage of Vim mode
     bool undo_redo_flag;                                //  holds if editor has to ignore text change event on undo and redo
+    bool line_change_flag;                              //  holds if line changes should be detected
     unsigned differences_index;                         //  actual index in redefined undo history
     vector<vector<bool> > differences;                  //  array which holds differences between file content for all steps of undo history
     vector<bool> actual_difference;                     //  actual file content difference between previous and actual step in editing
@@ -255,6 +256,12 @@ private:
 public slots:
     /// Handle change of text editor position
     void cursor_position_changed();
+
+
+    /// Handle change of single line
+    ///
+    /// @param  Holds integer value of changed line
+    void handle_line_change(int);
 
 
     /// Handle change of text editor content
@@ -991,6 +998,12 @@ private slots:
 
     /// Slot method to handle change of text editor content
     void editor_text_changed();
+
+
+    /// Slot method to handle block signal from syntax highlighter
+    ///
+    /// @param  Text block index value
+    void handle_block(int);
 
 
     /// Slot method to handle press event of clickable label object

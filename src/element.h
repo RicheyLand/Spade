@@ -70,7 +70,7 @@
 #include <QFontMetrics>
 #include <QColor>
 #include <random>
-//#include <QDebug>
+#include <QDebug>
 using namespace std;
 
 namespace Ui {

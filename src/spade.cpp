@@ -139,6 +139,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     vim_active = false;
     key_press_flag = false;
     undo_redo_flag = false;
+    line_change_flag = false;
     differences_index = 0;
                                                         //  connect signals sent by editor with appropriate slot methods
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
@@ -262,9 +263,63 @@ void CodeEditor::cursor_position_changed()
 }
 
 
+/// Handle change of single line
+///
+/// @param  Holds integer value of changed line
+void CodeEditor::handle_line_change(int line_index)
+{
+    if (undo_redo_flag)                                 //  not continue when special undo flag is active
+        return;
+
+    if (line_change_flag == false)
+        return;
+
+    if (textCursor().blockNumber() < line_index)
+        return;
+
+    vector<bool> new_difference;
+
+    if (old_selection.from > old_selection.to)          //  swap text cursor selection values if they are inverted
+    {
+        int temp = old_selection.from;
+        old_selection.from = old_selection.to;
+        old_selection.to = temp;
+    }
+
+    int N = blockCount();
+
+    for (int i = 0; i < N; i++)
+        new_difference.push_back(true);
+
+    int lines_from_top = line_index;
+    int lines_from_bottom =  N - line_index - 1;
+    int i = 0;
+
+    int M = actual_difference.size();
+
+    while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
+    {
+        lines_from_top--;
+        new_difference[lines_from_top] = actual_difference[lines_from_top];
+    }
+
+    i = 0;
+
+    while (i < N && i < M && lines_from_bottom)         //  refresh actual values in differences array from bottom of editor
+    {
+        new_difference[N - 1 - i] = actual_difference[M - 1 - i];
+        i++;
+        lines_from_bottom--;
+    }
+
+    actual_difference = new_difference;                 //  refresh actual difference
+    update();
+}
+
+
 /// Handle change of text editor content
 void CodeEditor::editor_text_changed()
-{
+{   
     if (actual_selection.from != textCursor().selectionStart() || actual_selection.to != textCursor().selectionEnd())
     {
         old_selection = actual_selection;               //  refresh values of text cursor selections if they were changed
@@ -275,165 +330,170 @@ void CodeEditor::editor_text_changed()
     if (undo_redo_flag)                                 //  not continue when special undo flag is active
         return;
 
-    vector<bool> new_difference;
-    QString new_content = document()->toPlainText();
+    content = document()->toPlainText();
+    line_change_flag = false;
 
-    if (content == new_content)
-        return;
+//    if (undo_redo_flag)                                 //  not continue when special undo flag is active
+//        return;
 
-    if (old_selection.from > old_selection.to)          //  swap text cursor selection values if they are inverted
-    {
-        int temp = old_selection.from;
-        old_selection.from = old_selection.to;
-        old_selection.to = temp;
-    }
+//    vector<bool> new_difference;
+//    QString new_content = document()->toPlainText();
 
-    int len = content.size();
-    int new_len = new_content.size();
+//    if (content == new_content)
+//        return;
 
-    int N = blockCount();
+//    if (old_selection.from > old_selection.to)          //  swap text cursor selection values if they are inverted
+//    {
+//        int temp = old_selection.from;
+//        old_selection.from = old_selection.to;
+//        old_selection.to = temp;
+//    }
 
-    for (int i = 0; i < N; i++)
-        new_difference.push_back(true);
+//    int len = content.size();
+//    int new_len = new_content.size();
 
-    if (len <= new_len)                                 //  length of text is same or length of text increased
-    {
-        bool conflict_flag = false;
-        int lines_from_top = 0;
-        int i = 0;
+//    int N = blockCount();
 
-        while (i < len)                                 //  get number of unchanged lines from top of editor
-        {
-            if (i == old_selection.from)
-                conflict_flag = true;
+//    for (int i = 0; i < N; i++)
+//        new_difference.push_back(true);
 
-            if (conflict_flag)
-            {
-                if (content[i] != new_content[i])       //  repeat comparing of characters until characters are different
-                    break;
-            }
+//    if (len <= new_len)                                 //  length of text is same or length of text increased
+//    {
+//        bool conflict_flag = false;
+//        int lines_from_top = 0;
+//        int i = 0;
 
-            if (content[i] == '\n')                     //  handle new line behavior
-            {
-                if (conflict_flag)
-                {
-                    lines_from_top++;
-                    break;
-                }
-                else
-                    lines_from_top++;
-            }
+//        while (i < len)                                 //  get number of unchanged lines from top of editor
+//        {
+//            if (i == old_selection.from)
+//                conflict_flag = true;
 
-            i++;                                        //  move to next character in content
-        }
+//            if (conflict_flag)
+//            {
+//                if (content[i] != new_content[i])       //  repeat comparing of characters until characters are different
+//                    break;
+//            }
 
-        conflict_flag = false;
-        int lines_from_bottom = 0;
-        i = 0;
+//            if (content[i] == '\n')                     //  handle new line behavior
+//            {
+//                if (conflict_flag)
+//                {
+//                    lines_from_top++;
+//                    break;
+//                }
+//                else
+//                    lines_from_top++;
+//            }
 
-        while (i < len)                                 //  get number of unchanged lines from bottom of editor
-        {
-            if (len - 1 - i == old_selection.to)
-                conflict_flag = true;
+//            i++;                                        //  move to next character in content
+//        }
 
-            if (conflict_flag)
-            {
-                if (content[len - 1 - i] != new_content[new_len - 1 - i])   //  repeat comparing of characters until characters are different
-                    break;
-            }
+//        conflict_flag = false;
+//        int lines_from_bottom = 0;
+//        i = 0;
 
-            if (content[len - 1 - i] == '\n')           //  handle new line behavior
-            {
-                if (conflict_flag)
-                {
-                    lines_from_bottom++;
-                    break;
-                }
-                else
-                    lines_from_bottom++;
-            }
+//        while (i < len)                                 //  get number of unchanged lines from bottom of editor
+//        {
+//            if (len - 1 - i == old_selection.to)
+//                conflict_flag = true;
 
-            i++;                                        //  move to next character in content
-        }
+//            if (conflict_flag)
+//            {
+//                if (content[len - 1 - i] != new_content[new_len - 1 - i])   //  repeat comparing of characters until characters are different
+//                    break;
+//            }
 
-        int M = actual_difference.size();
+//            if (content[len - 1 - i] == '\n')           //  handle new line behavior
+//            {
+//                if (conflict_flag)
+//                {
+//                    lines_from_bottom++;
+//                    break;
+//                }
+//                else
+//                    lines_from_bottom++;
+//            }
 
-        while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
-        {
-            lines_from_top--;
-            new_difference[lines_from_top] = actual_difference[lines_from_top];
-        }
+//            i++;                                        //  move to next character in content
+//        }
 
-        i = 0;
+//        int M = actual_difference.size();
 
-        while (i < N && i < M && lines_from_bottom)     //  refresh actual values in differences array from bottom of editor
-        {
-            new_difference[N - 1 - i] = actual_difference[M - 1 - i];
-            i++;
-            lines_from_bottom--;
-        }
-    }
-    else                                                //  length of text decreased
-    {
-        int lines_from_top = 0;
-        int i = 0;
+//        while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
+//        {
+//            lines_from_top--;
+//            new_difference[lines_from_top] = actual_difference[lines_from_top];
+//        }
 
-        while (i < new_len)                             //  get number of unchanged lines from top of editor
-        {
-            if (i == old_selection.from)
-                break;
+//        i = 0;
 
-            if (content[i] == '\n')                     //  handle new line behavior
-                lines_from_top++;
+//        while (i < N && i < M && lines_from_bottom)     //  refresh actual values in differences array from bottom of editor
+//        {
+//            new_difference[N - 1 - i] = actual_difference[M - 1 - i];
+//            i++;
+//            lines_from_bottom--;
+//        }
+//    }
+//    else                                                //  length of text decreased
+//    {
+//        int lines_from_top = 0;
+//        int i = 0;
 
-            i++;                                        //  move to next character in content
-        }
+//        while (i < new_len)                             //  get number of unchanged lines from top of editor
+//        {
+//            if (i == old_selection.from)
+//                break;
 
-        int lines_from_bottom = 0;
-        i = 0;
+//            if (content[i] == '\n')                     //  handle new line behavior
+//                lines_from_top++;
 
-        while (i < new_len)                             //  get number of unchanged lines from bottom of editor
-        {
-            if (len - i == old_selection.to)
-                break;
+//            i++;                                        //  move to next character in content
+//        }
 
-            if (content[len - 1 - i] == '\n')           //  handle new line behavior
-                lines_from_bottom++;
+//        int lines_from_bottom = 0;
+//        i = 0;
 
-            i++;                                        //  move to next character in content
-        }
+//        while (i < new_len)                             //  get number of unchanged lines from bottom of editor
+//        {
+//            if (len - i == old_selection.to)
+//                break;
 
-        int M = actual_difference.size();
+//            if (content[len - 1 - i] == '\n')           //  handle new line behavior
+//                lines_from_bottom++;
 
-        while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
-        {
-            lines_from_top--;
-            new_difference[lines_from_top] = actual_difference[lines_from_top];
-        }
+//            i++;                                        //  move to next character in content
+//        }
 
-        i = 0;
+//        int M = actual_difference.size();
 
-        while (i < N && i < M && lines_from_bottom)     //  refresh actual values in differences array from bottom of editor
-        {
-            new_difference[N - 1 - i] = actual_difference[M - 1 - i];
-            i++;
-            lines_from_bottom--;
-        }
-    }
+//        while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
+//        {
+//            lines_from_top--;
+//            new_difference[lines_from_top] = actual_difference[lines_from_top];
+//        }
 
-    content = new_content;                              //  refresh content variable
-    actual_difference = new_difference;                 //  refresh actual difference
-    update();
+//        i = 0;
+
+//        while (i < N && i < M && lines_from_bottom)     //  refresh actual values in differences array from bottom of editor
+//        {
+//            new_difference[N - 1 - i] = actual_difference[M - 1 - i];
+//            i++;
+//            lines_from_bottom--;
+//        }
+//    }
+
+//    content = new_content;                              //  refresh content variable
+//    actual_difference = new_difference;                 //  refresh actual difference
+//    update();
 }
 
 
 /// Handle change of adding new item into undo history
 void CodeEditor::undo_command_added()
 {
-    editor_text_changed();                              //  handle text change by appropriate method
-                                                        //  push new item into differences array
-    if (differences_index == differences.size() - 1)
+    if (differences_index == differences.size() - 1)    //  push new item into differences array
     {
+        differences[differences_index] = actual_difference;
         differences.push_back(actual_difference);
         differences_index++;
     }
@@ -442,10 +502,12 @@ void CodeEditor::undo_command_added()
         while (differences_index < differences.size() - 1)      //  clear all undo history items if index is not same as end of history index
             differences.pop_back();
 
+        differences[differences_index] = actual_difference;
         differences.push_back(actual_difference);
         differences_index++;
     }
 
+    line_change_flag = true;
     update();
 }
 
@@ -459,6 +521,7 @@ void CodeEditor::text_undo()
         undo();                                         //  call default undo method
         undo_redo_flag = false;
         content = document()->toPlainText();            //  refresh content variable
+        differences[differences_index] = actual_difference;
         differences_index--;
         actual_difference = differences[differences_index];     //  refresh actual difference content
         update();
@@ -777,9 +840,9 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent * event)
 
             if (selection[blockNumber])                 //  actual line is affected by text cursor selection
             {
-                if (differences[differences_index].size())  //  handle array index overflow
+                if (actual_difference.size())  //  handle array index overflow
                 {                                       //  there is detected text difference on actual line
-                    if (differences[differences_index].size() > blockNumber && differences[differences_index][blockNumber])
+                    if (actual_difference.size() > blockNumber && actual_difference[blockNumber])
                     {
                         if (theme == 1 || theme == 3 || theme == 5)
                             painter.setPen(QColor(0, 110, 255));
@@ -804,9 +867,9 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent * event)
             }
             else                                        //  actual line is not affected by text cursor selection
             {
-                if (differences[differences_index].size())      //  handle array index overflow
+                if (actual_difference.size())      //  handle array index overflow
                 {                                       //  there is detected text difference on actual line
-                    if (differences[differences_index].size() > blockNumber && differences[differences_index][blockNumber])
+                    if (actual_difference.size() > blockNumber && actual_difference[blockNumber])
                     {
                         if (theme == 0)
                             painter.setPen(QColor(255, 20, 147));
@@ -1324,6 +1387,8 @@ Spade::Spade(int _which, QWidget *parent) :
         QObject::connect(editor + i, SIGNAL(build_signal()), this, SLOT(build_button_pressed()));
 
         QObject::connect(editor + i, SIGNAL(vim_key_press_signal(int,QString)), this, SLOT(vim_key_press(int,QString)));
+
+        QObject::connect(*(highlighters + i), SIGNAL(block_signal(int)), this, SLOT(handle_block(int)));
     }
 
     for (int i = 0; i < theme_count; i++)               //  iterate through all theme images
@@ -5918,6 +5983,16 @@ void Spade::editor_text_changed()
         else
             text_change_timer->start(3000);             //  start second countdown if text editor content changed
     }
+}
+
+
+/// Slot method to handle block signal from syntax highlighter
+///
+/// @param  Text block index value
+void Spade::handle_block(int block_index)
+{
+    int index = active_tabs[files->currentIndex()].index_in_tabs;
+    editor[index].handle_line_change(block_index);
 }
 
 

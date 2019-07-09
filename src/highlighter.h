@@ -58,6 +58,9 @@ private:
 
     QRegularExpression comment_start_expression;        //  regular expression for beginning of multiple line comment
     QRegularExpression comment_end_expression;          //  regular expression for end of multiple line comment
+
+signals:
+    void block_signal(int);
 };
 
 #endif // HIGHLIGHTER_H

@@ -1183,8 +1183,7 @@ void RichHighlighter::applyRules(Language * user_language, int _language, bool c
 /// @param  Content of changed line is accessed using string parameter
 void RichHighlighter::highlightBlock(const QString &text)
 {
-//    int line_number = currentBlock().blockNumber();
-//    qDebug() << line_number;
+    emit block_signal(currentBlock().blockNumber());
 
     if (language == c99 || language == cplusplus || language == java || language == php)
     {
