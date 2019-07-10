@@ -5743,7 +5743,7 @@ void Spade::slider_position_changed()
 /// Slot method to handle change of text cursor position
 void Spade::cursor_position_changed()
 {
-    cursor_timer->start(500);                           //  start half second countdown if text cursor position changed
+    cursor_timer->start(1000);                           //  start half second countdown if text cursor position changed
     slider_position_changed();
 }
 
@@ -5794,7 +5794,9 @@ void Spade::editor_text_changed()
         }
     }
 
-    handle_cursor_timeout();
+    active_tabs[index].extra_selections.clear();        //  remove all extra selections from text content
+    editor[active_tabs[index].index_in_tabs].setExtraSelections(active_tabs[index].extra_selections);
+
     refresh_undo_redo_buttons();                        //  refresh undo and redo push buttons
 
     if (class_tree_visible)                             //  check if class tree is already visible
