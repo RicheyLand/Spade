@@ -5094,8 +5094,15 @@ void Spade::refresh_extra_selections(int files_index)
             }
         }
     }
-    else if (content[position] == '{' || content[position] == '}')  //  text cursor is on block bracket character
+    else if (position && (content[position] == '{' || content[position] == '}' || content[position - 1] == '{' || content[position - 1] == '}'))  //  text cursor is on block bracket character
     {
+        int realPosition;
+
+        if (content[position] == '{' || content[position] == '}')
+            realPosition = position;
+        else
+            realPosition = position - 1;
+
         class Bracket                                   //  describes single bracket
         {
         public:
@@ -5132,7 +5139,7 @@ void Spade::refresh_extra_selections(int files_index)
 
         for (int i = 0; i < M; i++)                     //  iterate through brackets list
         {
-            if (position == brackets[i].index)          //  bracket on actual cursor position found in brackets list
+            if (realPosition == brackets[i].index)          //  bracket on actual cursor position found in brackets list
             {
                 int brackets_flag;
 
@@ -5152,8 +5159,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
@@ -5182,8 +5189,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
@@ -5201,8 +5208,15 @@ void Spade::refresh_extra_selections(int files_index)
             }
         }
     }
-    else if (content[position] == '(' || content[position] == ')')  //  text cursor is on classic bracket character
+    else if (position && (content[position] == '(' || content[position] == ')' || content[position - 1] == '(' || content[position - 1] == ')'))  //  text cursor is on classic bracket character
     {
+        int realPosition;
+
+        if (content[position] == '(' || content[position] == ')')
+            realPosition = position;
+        else
+            realPosition = position - 1;
+
         class Bracket                                   //  describes single bracket
         {
         public:
@@ -5239,7 +5253,7 @@ void Spade::refresh_extra_selections(int files_index)
 
         for (int i = 0; i < M; i++)                     //  iterate through brackets list
         {
-            if (position == brackets[i].index)          //  bracket on actual cursor position found in brackets list
+            if (realPosition == brackets[i].index)          //  bracket on actual cursor position found in brackets list
             {
                 int brackets_flag;
 
@@ -5259,8 +5273,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
@@ -5289,8 +5303,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
@@ -5308,8 +5322,15 @@ void Spade::refresh_extra_selections(int files_index)
             }
         }
     }
-    else if (content[position] == '[' || content[position] == ']')  //  text cursor is on array bracket character
+    else if (position && (content[position] == '[' || content[position] == ']' || content[position - 1] == '[' || content[position - 1] == ']'))  //  text cursor is on array bracket character
     {
+        int realPosition;
+
+        if (content[position] == '[' || content[position] == ']')
+            realPosition = position;
+        else
+            realPosition = position - 1;
+
         class Bracket                                   //  describes single bracket
         {
         public:
@@ -5346,7 +5367,7 @@ void Spade::refresh_extra_selections(int files_index)
 
         for (int i = 0; i < M; i++)                     //  iterate through brackets list
         {
-            if (position == brackets[i].index)          //  bracket on actual cursor position found in brackets list
+            if (realPosition == brackets[i].index)          //  bracket on actual cursor position found in brackets list
             {
                 int brackets_flag;
 
@@ -5366,8 +5387,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
@@ -5396,8 +5417,8 @@ void Spade::refresh_extra_selections(int files_index)
                             QTextEdit::ExtraSelection selection;
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
                             selection.format.setBackground(QColor(255, 150, 0, 150));
-                            selection.cursor.setPosition(position, QTextCursor::MoveAnchor);
-                            selection.cursor.setPosition(position + 1, QTextCursor::KeepAnchor);
+                            selection.cursor.setPosition(realPosition, QTextCursor::MoveAnchor);
+                            selection.cursor.setPosition(realPosition + 1, QTextCursor::KeepAnchor);
                             new_extra_selections.append(selection);
 
                             selection.cursor = editor[active_tabs[files_index].index_in_tabs].textCursor();
