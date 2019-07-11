@@ -37,6 +37,8 @@ Window::Window(QWidget *parent) :
     h_splitter->addWidget(v_splitter_2);
     h_splitter->setOrientation(Qt::Horizontal);
     h_splitter->setHandleWidth(0);
+    h_splitter->setCollapsible(0, false);
+    h_splitter->setCollapsible(1, false);
 
     ui->main_g_layout->addWidget(h_splitter);
 
@@ -62,9 +64,13 @@ Window::Window(QWidget *parent) :
     QObject::connect(widget_3, SIGNAL(send_language_signal(int,Language)), this, SLOT(handle_language_send_3(int,Language)));
     QObject::connect(widget_4, SIGNAL(send_language_signal(int,Language)), this, SLOT(handle_language_send_4(int,Language)));
 
-    widget_2->setHidden(true);                          //  only first text editor is visible default
+    widget_2->setHidden(true);                          //  only first text editor is visible by default
     widget_3->setHidden(true);
     widget_4->setHidden(true);
+
+    v_splitter->handle(1)->setEnabled(false);           //  hide all unnecessary handles
+    v_splitter_2->handle(1)->setEnabled(false);
+    h_splitter->handle(1)->setEnabled(false);
 }
 
 
@@ -170,6 +176,10 @@ void Window::handle_layout_selection(int index)
         widget_3->setVisible(true);
         widget_4->setVisible(true);
 
+        v_splitter->handle(1)->setEnabled(true);        //  hide all unnecessary handles
+        v_splitter_2->handle(1)->setEnabled(true);
+        h_splitter->handle(1)->setEnabled(true);
+
         setMinimumWidth(1500);
         setMinimumHeight(960);
 
@@ -186,6 +196,10 @@ void Window::handle_layout_selection(int index)
         widget_2->setHidden(true);                      //  hide rest text editors
         widget_3->setVisible(true);
         widget_4->setHidden(true);
+
+        v_splitter->handle(1)->setEnabled(true);        //  hide all unnecessary handles
+        v_splitter_2->handle(1)->setEnabled(false);
+        h_splitter->handle(1)->setEnabled(false);
 
         setMinimumWidth(750);
         setMinimumHeight(960);
@@ -204,6 +218,10 @@ void Window::handle_layout_selection(int index)
         widget_3->setHidden(true);                      //  hide rest text editors
         widget_4->setHidden(true);
 
+        v_splitter->handle(1)->setEnabled(false);       //  hide all unnecessary handles
+        v_splitter_2->handle(1)->setEnabled(false);
+        h_splitter->handle(1)->setEnabled(true);
+
         setMinimumWidth(1500);
         setMinimumHeight(480);
 
@@ -220,6 +238,10 @@ void Window::handle_layout_selection(int index)
         widget_2->setHidden(true);                      //  hide rest text editors
         widget_3->setHidden(true);
         widget_4->setHidden(true);
+
+        v_splitter->handle(1)->setEnabled(false);       //  hide all unnecessary handles
+        v_splitter_2->handle(1)->setEnabled(false);
+        h_splitter->handle(1)->setEnabled(false);
 
         setMinimumWidth(750);
         setMinimumHeight(480);
