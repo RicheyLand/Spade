@@ -6360,75 +6360,61 @@ void Spade::find_button_pressed()
 void Spade::swap_line_up_button_pressed()
 {
     int index = active_tabs[files->currentIndex()].index_in_tabs;
-    QString content = editor[index].document()->toPlainText();
-    * text_cursor = editor[index].textCursor();         //  set pointer to text cursor of actual editor tab
-    int position = text_cursor->position();
-    int from = text_cursor->selectionStart();           //  get cursor selection coordinates
-    int to = text_cursor->selectionEnd();
-    int up_line;                                        //  holds top line of lines which will be swapped up
-    int down_line;                                      //  holds bottom line of lines which will be swapped up
+    * text_cursor = editor[index].textCursor();
 
-    if (position == from)                               //  cursor position is on top line of lines to swap up
+    int start_position = text_cursor->selectionStart();     //  get starting and ending positions of text cursor selection
+    int end_position = text_cursor->selectionEnd();
+
+    text_cursor->setPosition(end_position);             //  move text cursor to the end of selection
+    text_cursor->setPosition(end_position, QTextCursor::KeepAnchor);
+
+    int down_line = text_cursor->blockNumber();         //  get index of line above cursor selection
+
+    text_cursor->setPosition(start_position);           //  move text cursor to the start of selection
+    text_cursor->setPosition(start_position, QTextCursor::KeepAnchor);
+
+    if (text_cursor->blockNumber() <= 0)                //  handle text line underflow
+        return;
+
+    text_cursor->beginEditBlock();                      //  all operations with text will be only one undo history item during lines swap
+
+    text_cursor->movePosition(QTextCursor::Up);         //  move to the line above the cursor selection
+    text_cursor->select(QTextCursor::BlockUnderCursor);
+
+    int up_line = text_cursor->blockNumber();           //  get index of line below cursor selection
+    bool top_difference_value = editor[index].actual_difference[up_line]; //  get text difference value
+
+    QString line_content = text_cursor->selectedText();     //  get content of line below cursor selection
+    int line_length = line_content.size();
+
+    if (line_length)                                    //  handle swapping with an non-empty line
     {
-        up_line = text_cursor->blockNumber();
-        down_line = up_line;
+        text_cursor->removeSelectedText();
 
-        for (int i = from; i < to; i++)                 //  find all newline characters inside cursor selection area
+        if (up_line == 0)                               //  swapped line is the first line in text document
         {
-            if (content[i] == '\n')                     //  get number of line which will be swapped up
-                down_line++;
+            text_cursor->deleteChar();
+            line_content = "\n" + line_content;
+            line_length++;
         }
     }
-    else                                                //  cursor position is on bottom line of lines to swap up
+    else                                                //  handle swapping with an empty line
     {
-        down_line = text_cursor->blockNumber();
-        up_line = down_line;
-
-        for (int i = from; i < to; i++)                 //  find all newline characters inside cursor selection area
-        {
-            if (content[i] == '\n')                     //  get number of line which will be swapped up
-                up_line--;
-        }
-    }
-
-    if (up_line)                                        //  above lines to swap is at least one line
-    {
-        text_cursor->beginEditBlock();                  //  all operations with text will be only one undo history item during lines swap
-        bool top_difference_value = editor[index].actual_difference[up_line - 1];   //  get difference value of line affected by swapping
-
-        text_cursor->movePosition(QTextCursor::Start);  //  select line above swap lines
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, up_line - 1);
-        text_cursor->select(QTextCursor::LineUnderCursor);
-
-        int remove_from = text_cursor->selectionStart();    //  save coordinates of line selection
-        int remove_to = text_cursor->selectionEnd();
-
-        QString line = "";
-
-        for (int i = remove_from; i < remove_to; i++)   //  save selected string content
-            line.push_back(content[i]);
-
-        line.push_back('\n');
-
-        text_cursor->movePosition(QTextCursor::Start);  //  move to beginning of line below swap lines
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, down_line + 1);
-        text_cursor->insertText(line);                  //  insert saved content of upper line
-        editor[index].setTextCursor(* text_cursor);
-
-        text_cursor->movePosition(QTextCursor::Start);  //  select line above swap lines again
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, up_line - 1);
-        text_cursor->select(QTextCursor::LineUnderCursor);
-        text_cursor->removeSelectedText();              //  remove selected line
         text_cursor->deleteChar();
-        editor[index].setTextCursor(* text_cursor);     //  apply all text changes to text editor
-
-        text_cursor->setPosition(from - line.size());   //  select swapped lines with cursor selection
-        text_cursor->setPosition(to - line.size(), QTextCursor::KeepAnchor);
-        editor[index].setTextCursor(* text_cursor);
-
-        text_cursor->endEditBlock();                    //  undo history is successfully increased by one item
-        editor[index].handle_swap_line_up(up_line - 1, down_line - up_line + 1, top_difference_value);  //  handle text differences using method
+        line_content = "\n";
+        line_length++;
     }
+
+    text_cursor->setPosition(editor[index].document()->findBlockByLineNumber(down_line - 1).position());  //  move to the line above cursor selection
+    text_cursor->movePosition(QTextCursor::EndOfLine);
+    text_cursor->insertText(line_content);              //  insert appropriate text content
+
+    text_cursor->setPosition(start_position - line_length);   //  select swapped lines with cursor selection
+    text_cursor->setPosition(end_position - line_length, QTextCursor::KeepAnchor);
+
+    editor[index].setTextCursor(* text_cursor);         //  apply changes onto editor
+    text_cursor->endEditBlock();                        //  undo history has successfully increased by one item
+    editor[index].handle_swap_line_up(up_line, down_line - up_line, top_difference_value);    //  handle text differences using appropriate method
 }
 
 
@@ -6436,75 +6422,69 @@ void Spade::swap_line_up_button_pressed()
 void Spade::swap_line_down_button_pressed()
 {
     int index = active_tabs[files->currentIndex()].index_in_tabs;
-    QString content = editor[index].document()->toPlainText();
-    * text_cursor = editor[index].textCursor();         //  set pointer to text cursor of actual editor tab
-    int position = text_cursor->position();
-    int from = text_cursor->selectionStart();           //  set pointer to text cursor of actual editor tab
-    int to = text_cursor->selectionEnd();
-    int up_line;                                        //  holds top line of lines which will be swapped down
-    int down_line;                                      //  holds bottom line of lines which will be swapped down
+    * text_cursor = editor[index].textCursor();
 
-    if (position == from)                               //  cursor position is on top line of lines to swap down
+    int start_position = text_cursor->selectionStart();     //  get starting and ending positions of text cursor selection
+    int end_position = text_cursor->selectionEnd();
+
+    text_cursor->setPosition(start_position);           //  move text cursor to the start of selection
+    text_cursor->setPosition(start_position, QTextCursor::KeepAnchor);
+
+    int up_line = text_cursor->blockNumber();           //  get index of line above cursor selection
+
+    text_cursor->setPosition(end_position);             //  move text cursor to the end of selection
+    text_cursor->setPosition(end_position, QTextCursor::KeepAnchor);
+
+    if (text_cursor->blockNumber() + 2 >= editor[index].document()->blockCount())   //  handle text line overflow
+        return;
+
+    text_cursor->beginEditBlock();                      //  all operations with text will be only one undo history item during lines swap
+
+    text_cursor->movePosition(QTextCursor::Down);       //  move to the line below the cursor selection
+    text_cursor->select(QTextCursor::BlockUnderCursor);
+
+    int down_line = text_cursor->blockNumber();         //  get index of line below cursor selection
+    bool top_difference_value = editor[index].actual_difference[down_line + 1]; //  get text difference value
+
+    QString line_content = text_cursor->selectedText();     //  get content of line below cursor selection
+    int line_length = line_content.size();
+
+    if (line_length)                                    //  handle swapping with an non-empty line
+        text_cursor->removeSelectedText();
+    else                                                //  handle swapping with an empty line
     {
-        up_line = text_cursor->blockNumber();
-        down_line = up_line;
-
-        for (int i = from; i < to; i++)                 //  find all newline characters inside cursor selection area
-        {
-            if (content[i] == '\n')                     //  get number of line which will be swapped down
-                down_line++;
-        }
+        text_cursor->deleteChar();                      //  handle first line swapping behaviour
+        line_content = "\n";
+        line_length++;
     }
-    else                                                //  cursor position is on bottom line of lines to swap down
+
+    text_cursor->setPosition(editor[index].document()->findBlockByLineNumber(up_line).position());  //  move to the line above cursor selection
+
+    if (up_line)                                        //  swapped line is not the first line in text document
     {
-        down_line = text_cursor->blockNumber();
-        up_line = down_line;
+        text_cursor->movePosition(QTextCursor::Up);
+        text_cursor->movePosition(QTextCursor::EndOfLine);
 
-        for (int i = from; i < to; i++)                 //  find all newline characters inside cursor selection area
-        {
-            if (content[i] == '\n')                     //  get number of line which will be swapped down
-                up_line--;
-        }
+        text_cursor->insertText(line_content);          //  insert appropriate text content
     }
-
-    if (down_line + 1 < editor[index].blockCount())     //  below lines to swap is at least one line
+    else                                                //  swapped line is the first line in text document
     {
-        text_cursor->beginEditBlock();                  //  all operations with text will be only one undo history item during lines swap
-        bool top_difference_value = editor[index].actual_difference[down_line + 1];     //  get difference value of line affected by swapping
+        text_cursor->movePosition(QTextCursor::Up);     //  handle first line swapping behaviour
+        text_cursor->insertText("\n");
+        text_cursor->movePosition(QTextCursor::Up);
 
-        text_cursor->movePosition(QTextCursor::Start);  //  select line below swap lines
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, down_line + 1);
-        text_cursor->select(QTextCursor::LineUnderCursor);
+        text_cursor->insertText(line_content);          //  insert appropriate text content
 
-        int remove_from = text_cursor->selectionStart();    //  save coordinates of line selection
-        int remove_to = text_cursor->selectionEnd();
-
-        QString line = "";
-
-        for (int i = remove_from; i < remove_to; i++)   //  save selected string content
-            line.push_back(content[i]);
-
-        line.push_back('\n');
-
-        text_cursor->movePosition(QTextCursor::Start);  //  move to beginning of line above swap lines
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, up_line);
-        text_cursor->insertText(line);                  //  insert saved content of upper line
-        editor[index].setTextCursor(* text_cursor);
-
-        text_cursor->movePosition(QTextCursor::Start);  //  select line below swap lines again
-        text_cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, down_line + 2);
-        text_cursor->select(QTextCursor::LineUnderCursor);
-        text_cursor->removeSelectedText();              //  remove selected line
-        text_cursor->deleteChar();
-        editor[index].setTextCursor(* text_cursor);     //  apply all text changes to text editor
-
-        text_cursor->setPosition(from + line.size());   //  select swapped lines with cursor selection
-        text_cursor->setPosition(to + line.size(), QTextCursor::KeepAnchor);
-        editor[index].setTextCursor(* text_cursor);
-
-        text_cursor->endEditBlock();                    //  undo history is successfully increased by one item
-        editor[index].handle_swap_line_down(up_line + 1, down_line - up_line + 1, top_difference_value);    //  handle text differences using method
+        text_cursor->movePosition(QTextCursor::Up);
+        text_cursor->deleteChar();                      //  remove explicit line
     }
+
+    text_cursor->setPosition(start_position + line_length);   //  select swapped lines with cursor selection
+    text_cursor->setPosition(end_position + line_length, QTextCursor::KeepAnchor);
+
+    editor[index].setTextCursor(* text_cursor);         //  apply changes onto editor
+    text_cursor->endEditBlock();                        //  undo history has successfully increased by one item
+    editor[index].handle_swap_line_down(up_line + 1, down_line - up_line, top_difference_value);    //  handle text differences using appropriate method
 }
 
 
