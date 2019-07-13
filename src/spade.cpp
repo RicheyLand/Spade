@@ -950,7 +950,7 @@ Spade::Spade(int _which, QWidget *parent) :
         editor[i].setCursorWidth(2);
         editor[i].setBackgroundVisible(true);
         editor[i].setCenterOnScroll(false);
-        editor[i].setAcceptDrops(false);
+        editor[i].setAcceptDrops(true);
 
         editor[i].setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         editor[i].setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
