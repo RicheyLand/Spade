@@ -5730,6 +5730,9 @@ void Spade::handle_text_change_timeout()
 {
     text_change_timer->stop();
 
+//    if (class_tree_visible)                             //  check if class tree is already visible
+//        QFuture<void> future = QtConcurrent::run(this, &Spade::refresh_class_tree);
+
     if (class_tree_visible)                             //  check if class tree is already visible
         refresh_class_tree();                           //  refresh class tree content
 }
@@ -5831,13 +5834,13 @@ void Spade::editor_text_changed()
             {
                 if (active_projects[projects->currentIndex() - 1].files[i] == path)
                 {
-                    text_change_timer->start(3000);     //  start second countdown if text editor content changed
+                    text_change_timer->start(5000);     //  start second countdown if text editor content changed
                     break;
                 }
             }
         }
         else
-            text_change_timer->start(3000);             //  start second countdown if text editor content changed
+            text_change_timer->start(5000);             //  start second countdown if text editor content changed
     }
 }
 
@@ -10725,7 +10728,7 @@ void Spade::project_language_selected(int)
     if (projects->currentIndex() == 0)                  //  single file mode must be active to allow change of language
     {
         if (class_tree_visible)                         //  check if class tree is already visible
-            text_change_timer->start(3000);             //  refresh class tree content
+            text_change_timer->start(5000);             //  refresh class tree content
     }
 }
 
@@ -11056,7 +11059,7 @@ void Spade::source_button_pressed()
                 source_files->setToolTip(values[N - 1]);
 
                 if (class_tree_visible)                 //  check if class tree is already visible
-                    text_change_timer->start(3000);     //  refresh class tree content
+                    text_change_timer->start(5000);     //  refresh class tree content
             }
         }
     }
@@ -11127,7 +11130,7 @@ void Spade::project_selected(int index)
     }
 
     if (class_tree_visible)                             //  check if class tree is already visible
-        text_change_timer->start(3000);                 //  refresh class tree content
+        text_change_timer->start(5000);                 //  refresh class tree content
 }
 
 
@@ -11145,7 +11148,7 @@ void Spade::class_tree_button_pressed()
     {
         class_tree_button->setIcon(* class_on_icon);
         class_tree_visible = true;
-        text_change_timer->start(50);               //  reveal class tree after 50 miliseconds
+        text_change_timer->start(100);              //  reveal class tree after 100 miliseconds
     }
 }
 
@@ -11946,7 +11949,7 @@ void Spade::file_selected(int index)
             language->setCurrentIndex(languages->currentIndex());
 
         if (class_tree_visible)                         //  check if class tree is already visible
-            text_change_timer->start(3000);             //  refresh class tree content with appropriate delay
+            text_change_timer->start(5000);             //  refresh class tree content with appropriate delay
     }
 }
 
