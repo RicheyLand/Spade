@@ -256,6 +256,7 @@ public slots:
     /// Handle change of text editor position
     void cursor_position_changed();
 
+    void calculate_changes(int N, int & line_index);
 
     /// Handle change of single line
     ///

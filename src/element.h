@@ -2,7 +2,7 @@
 #define ELEMENT_H
 
 #include <QtWidgets>
-//#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent/QtConcurrent>
 
 #include <fstream>
 #include <vector>

@@ -259,6 +259,36 @@ void CodeEditor::cursor_position_changed()
     lineNumberArea->setToolTip(QString("Line: %1, Column %2").arg(textCursor().blockNumber()).arg(textCursor().columnNumber()));
 }
 
+void CodeEditor::calculate_changes(int lines_count, int & line_index)
+{
+    vector<bool> new_difference;
+
+    for (int i = 0; i < lines_count; i++)
+        new_difference.push_back(true);                 //  initialize new list of differences
+
+    int lines_from_top = line_index;
+    int lines_from_bottom =  lines_count - line_index - 1;
+    int i = 0;
+
+    int actual_count = actual_difference.size();
+
+    while (lines_from_top && lines_from_top < lines_count && lines_from_top < actual_count)  //  refresh actual values in differences array from top of editor
+    {
+        lines_from_top--;
+        new_difference[lines_from_top] = actual_difference[lines_from_top];
+    }
+
+    i = 0;
+
+    while (i < lines_count && i < actual_count && lines_from_bottom)         //  refresh actual values in differences array from bottom of editor
+    {
+        new_difference[lines_count - 1 - i] = actual_difference[actual_count - 1 - i];
+        i++;
+        lines_from_bottom--;
+    }
+
+    actual_difference = new_difference;                 //  refresh actual difference
+}
 
 /// Handle change of single line
 ///
@@ -274,35 +304,7 @@ void CodeEditor::handle_line_change(int line_index)
     if (textCursor().blockNumber() < line_index)        //  ignore following lines
         return;
 
-    vector<bool> new_difference;
-
-    int N = blockCount();
-
-    for (int i = 0; i < N; i++)
-        new_difference.push_back(true);
-
-    int lines_from_top = line_index;
-    int lines_from_bottom =  N - line_index - 1;
-    int i = 0;
-
-    int M = actual_difference.size();
-
-    while (lines_from_top && lines_from_top < N && lines_from_top < M)  //  refresh actual values in differences array from top of editor
-    {
-        lines_from_top--;
-        new_difference[lines_from_top] = actual_difference[lines_from_top];
-    }
-
-    i = 0;
-
-    while (i < N && i < M && lines_from_bottom)         //  refresh actual values in differences array from bottom of editor
-    {
-        new_difference[N - 1 - i] = actual_difference[M - 1 - i];
-        i++;
-        lines_from_bottom--;
-    }
-
-    actual_difference = new_difference;                 //  refresh actual difference
+    QtConcurrent::run(this, &CodeEditor::calculate_changes, blockCount(), line_index);
     update();
 }
 
@@ -5050,7 +5052,7 @@ void Spade::refresh_extra_selections(int files_index)
     int N = content.size();
     int position = editor[index].textCursor().position();   //  save actual text cursor position
 
-    remove_comments_and_quotation(content, active_tabs[files_index].language);  //  remove all comments and quotation from source code string
+    QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_tabs[files_index].language);  //  remove all comments and quotation from source code string
 
     if (content[position].isLetterOrNumber() || content[position] == '_')   //  actual character is part of language identifier
     {
@@ -11494,7 +11496,7 @@ void Spade::run_button_pressed()
                             file.close();
                         }
 
-                        remove_comments_and_quotation(content, active_projects[projects->currentIndex() - 1].language);
+                        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_projects[projects->currentIndex() - 1].language);  //  remove all comments and quotation
                         QRegularExpressionMatchIterator match_iter = regex.globalMatch(content);     //  check for global match of regular expression from rule
 
                         if (match_iter.hasNext())       //  iterate through all regular expression matches
@@ -11689,7 +11691,7 @@ void Spade::build_button_pressed()
                             file.close();
                         }
 
-                        remove_comments_and_quotation(content, active_projects[projects->currentIndex() - 1].language);
+                        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_projects[projects->currentIndex() - 1].language);  //  remove all comments and quotation
                         QRegularExpressionMatchIterator match_iter = regex.globalMatch(content);     //  check for global match of regular expression from rule
 
                         if (match_iter.hasNext())       //  iterate through all regular expression matches
@@ -13959,7 +13961,7 @@ void Spade::refresh_class_tree()
             files_list.pop_front();
         }
 
-        remove_comments_and_quotation(content, actual_language);  //  remove all comments and quotation from source code string
+        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, actual_language);  //  remove all comments and quotation from source code string
 
         int enum_count = 0;
                                                         //  regular expression to match C++ enumeration
@@ -16561,7 +16563,7 @@ void Spade::refresh_class_tree()
         }
 
         int content_len = content.size();
-        remove_comments_and_quotation(content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
+        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
 
         QRegularExpression enum_regex("enum[ \t\n]+[A-Za-z_][A-Za-z0-9_]*[ \t\n]*{");
         enum_regex.optimize();
@@ -17283,7 +17285,7 @@ void Spade::refresh_class_tree()
     {
         QString content = editor[index].document()->toPlainText();
         int content_len = content.size();
-        remove_comments_and_quotation(content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
+        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
 
         QRegularExpression interface_regex("interface[ \t\n]+[A-Za-z_][A-Za-z0-9_]*"
                                        "([ \t\n]+extends[ \t\n]+[A-Za-z_][A-Za-z0-9_]*([ \t\n]*[,][ \t\n]*[A-Za-z_][A-Za-z0-9_]*)*){0,1}"
@@ -18371,7 +18373,7 @@ void Spade::refresh_class_tree()
     else if (actual_language == python)                 //  selected language of actual text editor tab is Python
     {
         QString content = editor[index].document()->toPlainText();
-        remove_comments_and_quotation(content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
+        QtConcurrent::run(this, &Spade::remove_comments_and_quotation, content, active_tabs[actual].language);  //  remove all comments and quotation from source code string
 
         QRegularExpression regex("[\n][ \t]*class[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]*"
                                  "(\\([ \t]*[A-Za-z_][A-Za-z0-9_]*[ \t]*([ \t]*,[ \t]*[A-Za-z_][A-Za-z0-9_]*[ \t]*)*\\)){0,1}[ \t]*:");
