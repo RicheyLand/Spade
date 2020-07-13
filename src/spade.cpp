@@ -929,8 +929,9 @@ Spade::Spade(int _which, QWidget *parent) :
 
     font.setFamily("Monospace");                        //  set font family to Monospace
     font.setStyleHint(QFont::Monospace);                //  set font style hint if default font is not available
-    font.setHintingPreference(QFont::PreferNoHinting);  //  set no font hinting
-    font.setStyleStrategy(QFont::PreferQuality);        //  set desired style strategy for font
+    font.setHintingPreference(QFont::PreferFullHinting);    //  set full font hinting
+    font.setStyleStrategy(QFont::PreferAntialias);      //  set desired style strategy for font
+    font.setKerning(true);
     font.setFixedPitch(true);                           //  set fixed pitch of font
     font.setPointSize(10);                              //  set desired font size
 
