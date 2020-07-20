@@ -666,6 +666,153 @@ void RichHighlighter::applyRules(Language * user_language, int _language, bool c
         comment_end_expression = QRegularExpression("\\*/");    //  regular expression for end of multiple line comment
         comment_end_expression.optimize();
     }
+    else if (language == javascript)
+    {
+        HighlightingRule rule;                              //  single instance of highlighting rule
+
+        rule.pattern = QRegularExpression("\\b(((0b|0B)[01]*)|((0x|0X){0,1}[0-9]*\\.?[0-9]+([eE][+-]?[0-9]+)?|[0-9]+\\.?[0-9]*([eE][+-]?[0-9]+)?))\\b");
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 2, comments, false));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        QStringList type_patterns;                          //  string list of standard JavaScript types
+        type_patterns << "\\blong\\b"                       //  fill string list by all standard JavaScript types
+                    << "\\bshort\\b"
+                    << "\\bvar\\b"
+                    << "\\bboolean\\b"
+                    << "\\bbyte\\b"
+                    << "\\bchar\\b"
+                    << "\\bdouble\\b"
+                    << "\\bfloat\\b"
+                    << "\\bint\\b"
+                    << "\\bclass\\b"
+                    << "\\bconst\\b"
+                    << "\\benum\\b"
+                    << "\\binterface\\b"
+                    << "\\bvolatile\\b"
+                    << "\\bvoid\\b";
+
+        foreach (const QString &pattern, type_patterns)     //  iterate through string list of standard JavaScript types
+        {
+            rule.pattern = QRegularExpression(pattern);     //  set regular expression for new highlighting rule
+            rule.pattern.optimize();
+            rule.format.setForeground(return_color(theme, 0, comments, false));
+            highlighting_rules.append(rule);                //  push new highlighting rule
+        }
+
+        QStringList keyword_patterns;                       //  string list of JavaScript keywords
+        keyword_patterns << "\\babstract\\b"                //  fill string list by all JavaScript keywords
+                        << "\\barguments\\b"
+                        << "\\bawait\\b"
+                        << "\\bbreak\\b"
+                        << "\\bcase\\b"
+                        << "\\bcatch\\b"
+                        << "\\bcontinue\\b"
+                        << "\\bdebugger\\b"
+                        << "\\bdefault\\b"
+                        << "\\bdelete\\b"
+                        << "\\bdo\\b"
+                        << "\\belse\\b"
+                        << "\\beval\\b"
+                        << "\\bexport\\b"
+                        << "\\bextends\\b"
+                        << "\\bfinal\\b"
+                        << "\\bfinally\\b"
+                        << "\\bfor\\b"
+                        << "\\bfunction\\b"
+                        << "\\bgoto\\b"
+                        << "\\bif\\b"
+                        << "\\bimplements\\b"
+                        << "\\bimport\\b"
+                        << "\\bin\\b"
+                        << "\\binstanceof\\b"
+                        << "\\blet\\b"
+                        << "\\bnative\\b"
+                        << "\\bnew\\b"
+                        << "\\bpackage\\b"
+                        << "\\bprivate\\b"
+                        << "\\bprotected\\b"
+                        << "\\bpublic\\b"
+                        << "\\breturn\\b"
+                        << "\\bstatic\\b"
+                        << "\\bswitch\\b"
+                        << "\\bsynchronized\\b"
+                        << "\\bthrow\\b"
+                        << "\\bthrows\\b"
+                        << "\\btransient\\b"
+                        << "\\btry\\b"
+                        << "\\btypeof\\b"
+                        << "\\bwhile\\b"
+                        << "\\bwith\\b"
+                        << "\\byield\\b";
+
+        foreach (const QString &pattern, keyword_patterns)  //  iterate through string list of JavaScript keywords
+        {
+            rule.pattern = QRegularExpression(pattern);     //  set regular expression for new highlighting rule
+            rule.pattern.optimize();
+            rule.format.setForeground(return_color(theme, 1, comments, false));
+            highlighting_rules.append(rule);                //  push new highlighting rule
+        }
+
+        QStringList rest_patterns;                          //  string list of JavaScript keywords
+        rest_patterns << "\\bsuper\\b" << "\\bthis\\b";     //  string list of JavaScript keywords
+
+        foreach (const QString &pattern, rest_patterns)     //  iterate through string list of JavaScript keywords
+        {
+            rule.pattern = QRegularExpression(pattern);     //  set regular expression for new highlighting rule
+            rule.pattern.optimize();
+            rule.format.setForeground(return_color(theme, 5, comments, false));
+            highlighting_rules.append(rule);                //  push new highlighting rule
+        }
+
+        QStringList nullptr_patterns;                       //  string list next four JavaScript keywords
+        nullptr_patterns << "\\bfalse\\b" << "\\btrue\\b" << "\\bnull\\b";  //  string list next four JavaScript keywords
+
+        foreach (const QString &pattern, nullptr_patterns)  //  iterate through string list of next three JavaScript keywords
+        {
+            rule.pattern = QRegularExpression(pattern);     //  set regular expression for new highlighting rule
+            rule.pattern.optimize();
+            rule.format.setForeground(return_color(theme, 2, comments, false));
+            highlighting_rules.append(rule);                //  push new highlighting rule
+        }
+
+        rule.pattern = QRegularExpression("[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()");  //  regular expression to parse JavaScript function or method identifier
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 3, comments, false));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        rule.pattern = QRegularExpression("\\b[A-Z][A-Za-z0-9_]*\\b");  //  regular expression to parse JavaScript data type
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 0, comments, false));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        rule.pattern = QRegularExpression("'(\\\\.|[^'])*'");   //  regular expression to parse text in single quotes
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 4, comments, false));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        rule.pattern = QRegularExpression("\"(\\\\.|[^\"])*\"");    //  regular expression to parse text in double quotes
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 4, comments, false));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        rule.pattern = QRegularExpression("//[^\n]*");      //  regular expression to parse single line comments
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 6, comments, true));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        rule.pattern = QRegularExpression("/\\*.*?\\*/");   //  regular expression to parse multi line comments on single line
+        rule.pattern.optimize();
+        rule.format.setForeground(return_color(theme, 6, comments, true));
+        highlighting_rules.append(rule);                    //  push new highlighting rule
+
+        multi_line_comment_format.setForeground(return_color(theme, 6, comments, true));
+
+        comment_start_expression = QRegularExpression("/\\*");  //  regular expression for beginning of multiple line comment
+        comment_start_expression.optimize();
+        comment_end_expression = QRegularExpression("\\*/");    //  regular expression for end of multiple line comment
+        comment_end_expression.optimize();
+    }
     else if (language == php)
     {
         HighlightingRule rule;                              //  single instance of highlighting rule
@@ -1185,7 +1332,7 @@ void RichHighlighter::highlightBlock(const QString &text)
 {
     emit block_signal(currentBlock().blockNumber());
 
-    if (language == c99 || language == cplusplus || language == java || language == php)
+    if (language == c99 || language == cplusplus || language == java || language == javascript || language == php)
     {
         QString line = text;
 

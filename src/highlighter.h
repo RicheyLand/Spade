@@ -3,7 +3,7 @@
 
 #include "elements.h"
 
-#define builtInLanguages 6
+#define builtInLanguages 7
 
 
 /// Holds list of all by default supported languages
@@ -12,6 +12,7 @@ enum LanguageType
     c99,
     cplusplus,
     java,
+    javascript,
     php,
     plain_text,
     python

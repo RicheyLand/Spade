@@ -2817,6 +2817,7 @@ void Elements::save_button_pressed()
         if (ui->name_line_edit->text().toLower() != "c" &&
             ui->name_line_edit->text().toLower() != "c++" &&
             ui->name_line_edit->text().toLower() != "java" &&
+            ui->name_line_edit->text().toLower() != "javascript" &&
             ui->name_line_edit->text().toLower() != "php" &&
             ui->name_line_edit->text().toLower() != "plain text" &&
             ui->name_line_edit->text().toLower() != "python")

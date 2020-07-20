@@ -1447,6 +1447,12 @@ private slots:
     bool is_java_keyword(QString &);
 
 
+    /// Check if keyword represents Java language keyword
+    ///
+    /// @param  Keyword is represented as a string value
+    bool is_javascript_keyword(QString &);
+
+
     /// Check if keyword represents PHP language keyword
     ///
     /// @param  Keyword is represented as a string value

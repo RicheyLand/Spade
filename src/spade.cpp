@@ -2345,6 +2345,7 @@ void Spade::init_interface()
     language->addItem("C");
     language->addItem("C++");
     language->addItem("Java");
+    language->addItem("JavaScript");
     language->addItem("PHP");
     language->addItem("Plain text");
     language->addItem("Python");
@@ -2534,6 +2535,7 @@ void Spade::init_interface()
     languages->addItem("C");
     languages->addItem("C++");
     languages->addItem("Java");
+    languages->addItem("JavaScript");
     languages->addItem("PHP");
     languages->addItem("Plain text");
     languages->addItem("Python");
@@ -4229,6 +4231,39 @@ void Spade::show_template_tray()
             template_style_button_10->setMaximumSize(85, 30);
 
             break;
+    case javascript:                                    //  code templates for JavaScript language
+            template_style_button_1->setText("If");
+            template_style_button_1->setMinimumSize(35, 30);
+            template_style_button_1->setMaximumSize(35, 30);
+            template_style_button_2->setText("Test");
+            template_style_button_2->setMinimumSize(50, 30);
+            template_style_button_2->setMaximumSize(50, 30);
+            template_style_button_3->setText("Switch");
+            template_style_button_3->setMinimumSize(65, 30);
+            template_style_button_3->setMaximumSize(65, 30);
+            template_style_button_4->setText("For");
+            template_style_button_4->setMinimumSize(40, 30);
+            template_style_button_4->setMaximumSize(40, 30);
+            template_style_button_5->setText("While");
+            template_style_button_5->setMinimumSize(60, 30);
+            template_style_button_5->setMaximumSize(60, 30);
+            template_style_button_6->setText("Do While");
+            template_style_button_6->setMinimumSize(85, 30);
+            template_style_button_6->setMaximumSize(85, 30);
+            template_style_button_7->setText("Method");
+            template_style_button_7->setMinimumSize(75, 30);
+            template_style_button_7->setMaximumSize(75, 30);
+            template_style_button_8->setText("Class");
+            template_style_button_8->setMinimumSize(55, 30);
+            template_style_button_8->setMaximumSize(55, 30);
+            template_style_button_9->setText("Hierarchy");
+            template_style_button_9->setMinimumSize(85, 30);
+            template_style_button_9->setMaximumSize(85, 30);
+            template_style_button_10->setText("Interface");
+            template_style_button_10->setMinimumSize(85, 30);
+            template_style_button_10->setMaximumSize(85, 30);
+
+            break;
         case php:                                       //  code templates for PHP language
             template_style_button_1->setText("If");
             template_style_button_1->setMinimumSize(35, 30);
@@ -4617,6 +4652,9 @@ int Spade::recognize_language(QString & file_name)
     if (file_name.endsWith(".dpj") || file_name.endsWith(".java") || file_name.endsWith(".jar") || file_name.endsWith(".jsp"))
         return java;
 
+    if (file_name.endsWith(".js"))
+        return javascript;
+
     if (file_name.endsWith(".PHP") || file_name.endsWith(".PHTML") || file_name.endsWith(".PHP3") || file_name.endsWith(".PHP4") ||
         file_name.endsWith(".PHP5") || file_name.endsWith(".PHP7 ") || file_name.endsWith(".PHPS") ||
         file_name.endsWith(".php") || file_name.endsWith(".phtml") || file_name.endsWith(".php3") || file_name.endsWith(".php4") ||
@@ -4764,7 +4802,7 @@ void Spade::remove_comments_and_quotation(QString & content, int & language)
 {                                                       //  remove all comments and quotation from source code string
     int N = content.size();                             //  get size of argument string
 
-    if (language == c99 || language == cplusplus || language == java)   //  active language of actual text editor tab is C99 or C++ or Java
+    if (language == c99 || language == cplusplus || language == java || language == javascript)   //  active language of actual text editor tab is C99, C++, Java or JavaScript
     {
         for (int i = 0; i < N; i++)                     //  iterate through all characters of argument string
         {
@@ -6005,6 +6043,7 @@ void Spade::open_button_pressed()
             "C++ header files (*.hh *.hxx *.h++);;"
             "C++ source files (*.cpp *.cc *.cxx *.c++);;"
             "Java source files (*.java *.jar *.jsp *.dpj);;"
+            "JavaScript source files (*.js);;"
             "PHP source files (*.php *.phtml *.php3 *.php4 *.php5 *.php7 *.phps);;"
             "Python source files (*.py *.py3)",         //  file filter
             (QString *)(nullptr),                       //  pointer to string of selected filter
@@ -10739,7 +10778,7 @@ void Spade::project_language_selected(int)
 /// Handle press of new project button
 void Spade::new_project_button_pressed()
 {
-    if (language->currentIndex() == plain_text || language->currentIndex() == php || language->currentIndex() == python)
+    if (language->currentIndex() == javascript || language->currentIndex() == plain_text || language->currentIndex() == php || language->currentIndex() == python)
         return;
 
     QString default_path = QDir::homePath();
@@ -11970,6 +12009,8 @@ void Spade::save_button_pressed()
             default_filename = "untitled.cpp";
         else if (active_tabs[files->currentIndex()].language == java)
             default_filename = "untitled.java";
+        else if (active_tabs[files->currentIndex()].language == javascript)
+            default_filename = "untitled.js";
         else if (active_tabs[files->currentIndex()].language == php)
             default_filename = "untitled.php";
         else if (active_tabs[files->currentIndex()].language == plain_text)
@@ -12026,6 +12067,8 @@ void Spade::save_button_pressed()
                 language->setCurrentIndex(cplusplus);
             else if (languages->currentIndex() == java)
                 language->setCurrentIndex(java);
+            else if (languages->currentIndex() == javascript)
+                language->setCurrentIndex(javascript);
             else if (languages->currentIndex() == php)
                 language->setCurrentIndex(php);
             else if (languages->currentIndex() == plain_text)
@@ -12796,9 +12839,9 @@ void Spade::handle_enter_press()
             i++;
         }
 
-        if (active_tabs[actual].language == c99 || active_tabs[actual].language == java ||
-            active_tabs[actual].language == php)        //  active language of actual text editor tab is C99 or Java or PHP
-        {                                               //  line string is starting with keyword which indicates C99 or Java or PHP block structure
+        if (active_tabs[actual].language == c99 || active_tabs[actual].language == java || active_tabs[actual].language == javascript ||
+            active_tabs[actual].language == php)        //  active language of actual text editor tab is C99, Java, JavaScript or PHP
+        {                                               //  line string is starting with keyword which indicates C99, Java, JavaScript, PHP block structure
             if ((line.startsWith("case") || line.startsWith("default")) && line.endsWith(":"))
             {                                           //  line string is starting with keyword which indicates command with colon at the end
                 offset = "\t" + offset;                 //  just indent next line with one extra tab character
@@ -12977,6 +13020,35 @@ bool Spade::is_java_keyword(QString & content)
     }
     else
         return false;                                   //  argument is not Java keyword
+}
+
+
+/// Check if keyword represents Java language keyword
+///
+/// @param  Keyword is represented as a string value
+bool Spade::is_javascript_keyword(QString & content)
+{
+    if (content == "abstract" || content == "arguments" || content == "await" || content == "boolean" ||
+        content == "break" || content == "byte" || content == "case" || content == "catch" ||
+        content == "char" || content == "class" || content == "const" || content == "continue" ||
+        content == "debugger" || content == "default" || content == "delete" || content == "do" ||
+        content == "double" || content == "else" || content == "enum" || content == "eval" ||
+        content == "export" || content == "extends" || content == "false" || content == "final" ||
+        content == "finally" || content == "float" || content == "for" || content == "function" ||
+        content == "goto" || content == "if" || content == "implements" || content == "import" ||
+        content == "in" || content == "instanceof" || content == "int" || content == "interface" ||
+        content == "let" || content == "long" || content == "native" || content == "new" ||
+        content == "null" || content == "package" || content == "private" || content == "protected" ||
+        content == "public" || content == "return" || content == "short" || content == "static" ||
+        content == "super" || content == "switch" || content == "synchronized" || content == "this" ||
+        content == "throw" || content == "throws" || content == "transient" || content == "true" ||
+        content == "try" || content == "typeof" || content == "var" || content == "void" ||
+        content == "volatile" || content == "while" || content == "with" || content == "yield")
+    {
+        return true;                                    //  argument is JavaScript keyword
+    }
+    else
+        return false;                                   //  argument is not JavaScript keyword
 }
 
 
