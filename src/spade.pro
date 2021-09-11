@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,9 +30,7 @@ FORMS    += window.ui \
     elements.ui \
     spade.ui
 
-QMAKE_CXXFLAGS_RELEASE -= -O1
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -std=c++11 -Wall -Wextra -pedantic -O3
+CONFIG += c++14
 
 RESOURCES += \
     resources.qrc
