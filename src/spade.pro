@@ -1,16 +1,7 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2018-02-03T16:14:45
-#
-#-------------------------------------------------
-
-QT += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += widgets core gui
 
 TARGET = spade
 TEMPLATE = app
-
 
 SOURCES += main.cpp\
         window.cpp \
@@ -30,7 +21,15 @@ FORMS    += window.ui \
     elements.ui \
     spade.ui
 
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -std=c++14 -O3
+
 CONFIG += c++14
+
+CONFIG(release, debug|release) {
+    CONFIG += optimize_full
+}
 
 RESOURCES += \
     resources.qrc
